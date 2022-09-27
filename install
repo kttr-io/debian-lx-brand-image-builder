@@ -289,6 +289,32 @@ echo "$(cat ${DTRACE_PACKAGE}.sha256) ${DTRACE_PACKAGE}" | sha256sum -c -
 echo "====> Installing into $INSTALL_DIR"
 dpkg --root $INSTALL_DIR -i ${DTRACE_PACKAGE}
 
+if [[ "$CHECK_VERSION" -ge 11 ]]; then
+	# FIXME need to test this with older versions
+
+	echo "==> Clearing machine-id"
+	echo > $INSTALL_DIR/etc/machine-id
+	echo > $INSTALL_DIR/var/lib/dbus/machine-id
+
+	echo "==> Installing ensure-machine-id.service"
+	cat <<-EOF > $INSTALL_DIR/etc/systemd/system/ensure-machine-id.service
+	[Unit]
+	Description=Ensure the system has a valid machine-id
+	After=local-fs.target first-boot-complete.target
+	ConditionPathIsReadWrite=/etc/machine-id
+	ConditionPathIsReadWrite=/var/lib/dbus/machine-id
+	[Install]
+	WantedBy=sysinit.target
+	[Service]
+	Type=oneshot
+	RemainAfterExit=yes
+	ExecStart=dbus-uuidgen --ensure=/etc/machine-id
+	ExecStart=dbus-uuidgen --ensure
+	EOF
+
+	chroot $INSTALL_DIR systemctl enable ensure-machine-id.service
+fi
+
 echo "==> Saving installation as $TARGET. This may take a few minutes."
 tar czf $TARGET --exclude-from=exclude.txt -C $INSTALL_DIR/ .
 
