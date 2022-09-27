@@ -175,8 +175,8 @@ deb-src http://httpredir.debian.org/debian $RELEASE main
 deb http://httpredir.debian.org/debian $RELEASE-updates main
 deb-src http://httpredir.debian.org/debian $RELEASE-updates main
 
-deb http://security.debian.org/ $RELEASE/updates  main
-deb-src http://security.debian.org/ $RELEASE/updates  main
+deb http://security.debian.org/debian-security $RELEASE-security  main
+deb-src http://security.debian.org/debian-security $RELEASE-security  main
 SOURCES
 
 echo "==> Updating packages"
@@ -279,19 +279,18 @@ echo "==> Installing dtracetools-lx in $INSTALL_DIR"
 echo "====> Downloading package and SHASUMs from https://us-east.manta.joyent.com/joyentsoln/public/"
 
 DTRACE_PACKAGE="dtracetools-lx_1.0_amd64.deb"
-D_PKG_SHASUM="shasum256.txt"
 
-curl -sSLO https://us-east.manta.joyent.com/joyentsoln/public/images/lx-brand/devel/packages/${DTRACE_PACKAGE}
-curl -sSLO https://us-east.manta.joyent.com/joyentsoln/public/images/lx-brand/devel/packages/${D_PKG_SHASUM}
+curl -sSLO https://mirrors.omnios.org/lx/${DTRACE_PACKAGE}
+curl -sSLO https://mirrors.omnios.org/lx/${DTRACE_PACKAGE}.sha256
 
 echo "====> Verifying package"
-grep " ${DTRACE_PACKAGE}\$" ${D_PKG_SHASUM} | sha256sum -c -
+echo "$(cat ${DTRACE_PACKAGE}.sha256) ${DTRACE_PACKAGE}" | sha256sum -c -
 
 echo "====> Installing into $INSTALL_DIR"
 dpkg --root $INSTALL_DIR -i ${DTRACE_PACKAGE}
 
 echo "==> Saving installation as $TARGET. This may take a few minutes."
-tar czf $TARGET --exclude-from=exclude.txt $INSTALL_DIR/
+tar czf $TARGET --exclude-from=exclude.txt -C $INSTALL_DIR/ .
 
 echo "==> Installation complete!"
 echo "==> $TARGET"
