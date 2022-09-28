@@ -20,7 +20,9 @@ jobs:
         run: |
           echo ::set-output name=timestamp::$(date -u +%Y%m%d'T'%H%M%S'Z')
       - name: Install Prerequisites
-        run: apt-get update && apt-get install -y debootstrap git
+        run: |
+          apt-get update && \
+          apt-get install -y debootstrap git curl
       - name: Create chroot Directory
         run: mkdir -p $CHROOT
       - name: Checkout
