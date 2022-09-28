@@ -1,0 +1,38 @@
+name: Create LX-Brand Root Filesystem
+
+on:
+  workflow_dispatch:
+    
+jobs:
+  create-root-fs:
+    runs-on: ubuntu-latest
+    container: debian:11-slim
+    strategy:
+      matrix:
+        debian_release:
+          - version: 11
+            codename: bullseye
+          - version: 10
+            codename: buster
+    env:
+      CHROOT: /data/chroot
+    steps:
+      - name: Build Timestamps
+        id: timestamp
+        run: |
+          echo ::set-output name=date::$(date -u +'%Y%m%d')
+          echo ::set-output name=timestamp::$(date -u +%Y%m%d'T'%H%M%S'Z')
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+      - name: Install Prerequisites
+        run: apt-get update && apt-get install -y debootstrap git
+      - name: Create chroot Directory
+        run: mkdir -p $CHROOT
+      - name: Create Root Filesystem
+        run: |
+          ./install -r ${{ matrix.debian_release.codename }} \
+            -m http://deb.debian.org/debian/ \
+            -i debian-${{ matrix.debian_release.version }} \
+            -p "Debian ${{ matrix.debian_release.version }} (${{ matrix.debian_release.codename }}) lx-brand image." \
+            -u https://docs.joyent.com/images/container-native-linux \
+            -d $CHROOT
