@@ -19,12 +19,12 @@ jobs:
         id: build_timestamp
         run: |
           echo ::set-output name=timestamp::$(date -u +%Y%m%d'T'%H%M%S'Z')
-      - name: Checkout
-        uses: actions/checkout@v3.0.2
       - name: Install Prerequisites
         run: apt-get update && apt-get install -y debootstrap git
       - name: Create chroot Directory
         run: mkdir -p $CHROOT
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
       - name: Create Root Filesystem
         run: |
           ./install -r ${{ matrix.debian_release.codename }} \
