@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     
 jobs:
-  create-root-fs:
+  build_root_fs:
     runs-on: ubuntu-latest
     container: debian:11-slim
     strategy:
@@ -17,10 +17,9 @@ jobs:
     env:
       CHROOT: /data/chroot
     steps:
-      - name: Build Timestamps
-        id: timestamp
+      - name: Timestamp
+        id: build_timestamp
         run: |
-          echo ::set-output name=date::$(date -u +'%Y%m%d')
           echo ::set-output name=timestamp::$(date -u +%Y%m%d'T'%H%M%S'Z')
       - name: Checkout
         uses: actions/checkout@v3.0.2
@@ -36,3 +35,28 @@ jobs:
             -p "Debian ${{ matrix.debian_release.version }} (${{ matrix.debian_release.codename }}) lx-brand image." \
             -u https://docs.joyent.com/images/container-native-linux \
             -d $CHROOT
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: root-fs
+          path: debian-${{ matrix.debian_release.version }}-*.tar.gz
+          retention-days: 1
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Timestamp
+        id: release_timestamp
+        run: |
+          echo ::set-output name=timestamp::$(date -u +%Y%m%d'T'%H%M%S'Z')
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: root-fs
+        continue-on-error: true   # maybe there are no updates      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ steps.release_timestamp.outputs.timestamp }}
+          files: debian-*.tar.gz
+          
