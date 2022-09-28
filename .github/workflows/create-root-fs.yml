@@ -6,7 +6,7 @@ on:
 jobs:
   build_root_fs:
     runs-on: ubuntu-latest
-    container: debian:11-slim
+    #container: debian:11-slim
     strategy:
       matrix:
         debian_release:
