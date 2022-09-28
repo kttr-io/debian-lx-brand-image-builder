@@ -12,8 +12,6 @@ jobs:
         debian_release:
           - version: 11
             codename: bullseye
-          - version: 10
-            codename: buster
     env:
       CHROOT: /data/chroot
     steps:
