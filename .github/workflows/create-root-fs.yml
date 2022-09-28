@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: debian:11
+      # this is required so we can mount /proc and /dev/pts
       options: --cap-add=SYS_ADMIN --security-opt apparmor:unconfined
     strategy:
       matrix:
