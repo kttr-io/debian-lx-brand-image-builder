@@ -154,9 +154,9 @@ debootstrap --components=main \
 echo "==> Done!"
 
 echo "==> Mounting /proc and /dev/pts in chroot"
-chroot $INSTALL_DIR mount proc /proc -t proc
+chroot $INSTALL_DIR mount proc /proc -t proc || echo "WARNING: could not mount /proc in chroot"
 mkdir -p $INSTALL_DIR/dev/pts
-mount --bind /dev/pts $INSTALL_DIR/dev/pts
+mount --bind /dev/pts $INSTALL_DIR/dev/pts || echo "WARNING: could not mount /dev/pts in chroot"
 
 echo "==> Setting TZ to UTC"
 rm $INSTALL_DIR/etc/localtime
