@@ -276,7 +276,7 @@ echo "====> Running ./install.sh -i $INSTALL_DIR"
 )
 
 echo "==> Installing dtracetools-lx in $INSTALL_DIR"
-echo "====> Downloading package and SHASUMs from https://us-east.manta.joyent.com/joyentsoln/public/"
+echo "====> Downloading package and SHASUMs from https://mirrors.omnios.org/lx/"
 
 DTRACE_PACKAGE="dtracetools-lx_1.0_amd64.deb"
 
