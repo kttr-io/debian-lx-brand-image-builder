@@ -6,7 +6,9 @@ on:
 jobs:
   build_root_fs:
     runs-on: ubuntu-latest
-    #container: debian:11-slim
+    container:
+      image: debian:11
+      options: --cap-add=SYS_ADMIN --security-opt apparmor:unconfined
     strategy:
       matrix:
         debian_release:
