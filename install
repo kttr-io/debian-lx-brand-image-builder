@@ -289,7 +289,7 @@ echo "$(cat ${DTRACE_PACKAGE}.sha256) ${DTRACE_PACKAGE}" | sha256sum -c -
 echo "====> Installing into $INSTALL_DIR"
 dpkg --root $INSTALL_DIR -i ${DTRACE_PACKAGE}
 
-if [[ "$CHECK_VERSION" -ge 11 ]]; then
+if [[ "$CHECK_VERSION" -ge 10 ]]; then
 	# FIXME need to test this with older versions
 
 	echo "==> Clearing machine-id"
