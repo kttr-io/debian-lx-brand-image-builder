@@ -32,7 +32,7 @@ jobs:
       - name: Create chroot Directory
         run: mkdir -p $CHROOT
       - name: Checkout
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v3.3.0
       - name: Create Root Filesystem
         run: |
           ./install -r ${{ matrix.debian_release.codename }} \
